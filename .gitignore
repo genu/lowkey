@@ -2,4 +2,6 @@
 src/media
 node_modules
 bower_components
-semantic
+semantic/src
+semantic/tasks
+semantic/gulpfile.js
