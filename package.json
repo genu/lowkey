@@ -88,6 +88,7 @@
   },
   "devDependencies": {
     "connect-livereload": "^0.5.2",
+    "grunt-contrib-jade": "^0.15.0",
     "jasmine-core": "^2.2.0",
     "jit-grunt": "^0.9.1",
     "karma": "^0.12.37",
