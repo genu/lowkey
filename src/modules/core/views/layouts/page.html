@@ -1,0 +1,19 @@
+<div class="container-fluid" style="margin: 20px;">
+    <div class="row">
+        <nav class="navbar navbar-default">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#/app">Simple Frontend Boilerplate</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li ui-sref-active="active" ng-repeat="item in topMenu">
+                        <a href="#" ui-sref="{{item.sref}}">
+                            <i class="fa" ng-class="item.icon"> </i>
+                            {{item.name}}</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div ui-view></div>
+</div>

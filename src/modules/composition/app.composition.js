@@ -1,0 +1,1 @@
+angular.module('module.composition', ['module.effects']);

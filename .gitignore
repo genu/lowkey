@@ -1,0 +1,5 @@
+.idea
+src/media
+node_modules
+bower_components
+semantic

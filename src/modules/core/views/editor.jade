@@ -1,0 +1,16 @@
+.row
+    .col-md-8
+        canvas#canvas(width="720px", height="480px")
+    .col-md-4
+        .panel.panel-default
+            .panel-heading Effects
+            ul.list-group
+                li.list-group-item(ng-repeat="effect in page.effects")
+                    span {{effect.label}}
+                    button(ng-click="page.addEffect(effect)") Add
+                    button(ng-click="page.removeEffect(effect)") Remove
+.row
+    .col-md-12
+        p timeline
+video.hidden#source(width="100%", height="480px", controls, autoplay)
+    source(src="media/sample_2.mkv", type="video/webm")

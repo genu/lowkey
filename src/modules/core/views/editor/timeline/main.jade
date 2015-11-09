@@ -1,0 +1,9 @@
+fa-app(style="width: 100%; height: 50px")
+    fa-modifier(fa-translate="timeline.cursor", fa-size="[timeline.cursor, 200]")
+        fa-surface#surface-cursor(fa-background-color="'red'")
+pre
+    | Active Layer: {{timeline.active_layer.name}}
+    | cursor: {{timeline.cursor | inDuration}} (raw: {{timeline.cursor}})
+div.sources
+    div
+        video(ng-repeat="layer in timeline.layers", id="{{layer.media.id}}", height="200px", width="200px", media="layer.media")

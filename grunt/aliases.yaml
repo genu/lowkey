@@ -1,0 +1,18 @@
+server:
+  - 'clean:server'
+  - 'concurrent:compile'
+  - 'ngconstant:development'
+  - 'copy:styles'
+  - 'copy:modules'
+  - 'includeSource:server'
+  - 'wiredep:server'
+  - 'autoprefixer'
+  - 'ngAnnotate'
+  - 'connect:livereload'
+  - 'watch'
+
+# work in progress
+docs:
+  - 'clean:docs'
+  - 'docular'
+  - 'docularserver'

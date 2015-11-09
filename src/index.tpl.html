@@ -1,0 +1,49 @@
+<!doctype html>
+<html ng-app="app" ng-controller="LayoutCtrl as layout">
+<head>
+    <meta charset="utf-8">
+    <title>{{layout.appName}}</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Semantic-UI -->
+    <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.css">
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css styles/main.css -->
+    <!-- include: "type": "css", "files": "css/*.css" -->
+    <!-- include: "type": "css", "files": "modules/**/*.css" -->
+    <!-- endbuild -->
+</head>
+<body ng-controller="MainCtrl as main">
+<!--[if lt IE 7]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> to improve your experience.</p>
+<![endif]-->
+<div ui-view></div>
+
+<!-- build:js scripts/oldieshim.js -->
+<!--[if lt IE 9]>
+<script src="bower_components/es5-shim/es5-shim.js"></script>
+<script src="bower_components/json3/lib/json3.js"></script>
+<![endif]-->
+<!-- endbuild -->
+<!-- build:js scripts/vendor.js -->
+<!-- bower:js -->
+<!-- endbower -->
+<!-- endbuild -->
+<!-- build:js scripts/libs.js -->
+<!-- Semantic-UI -->
+<script src="semantic/dist/semantic.js"></script>
+<!-- Libs -->
+<!-- include: "type": "js", "files": "libs/**/*.js", "ordering": "top-down" -->
+<!-- endbuild -->
+<!-- build:js scripts/scripts.js -->
+<!-- JS -->
+<!-- include: "type": "js", "files": "js/*.js" -->
+<!-- MODULES -->
+<!-- include: "type": "js", "files": ["modules/**/*.js", "!**/*.spec.js"]-->
+<!-- endbuild -->
+</body>
+</html>

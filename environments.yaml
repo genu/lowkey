@@ -1,0 +1,5 @@
+development:
+  API_URL: "https://DEVELOPMENT_API_URL"
+
+production:
+  API_URL: "https://PRODUCTION_API_URL"

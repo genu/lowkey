@@ -1,0 +1,14 @@
+.ui.inverted.vertical.masthead.center.aligned.segment
+    .ui.container
+        .ui.large.secondary.inverted.pointing.menu
+            a.active.item Editor
+            .right.item
+                a.ui.inverted.button Log in
+                a.inverted.button Sign up
+.ui.vertical.stripe.segment
+    .ui.grid
+        .two.column.row
+            .column(ui-view="previewer@")
+            .column(ui-view="resources@")
+        .one.column.row
+            .column(ui-view="timeline@")
