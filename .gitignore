@@ -4,3 +4,4 @@ node_modules
 bower_components
 semantic/src
 semantic/tasks
+semantic/gulpfile.js
