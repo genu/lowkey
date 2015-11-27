@@ -1,1 +1,7 @@
-.ui.center.sligned.basic.segment Media list here
+div.ui.two.column.grid(ng-controller="MediaCtrl as media")
+    div.column(ng-repeat="source in media.sources")
+        div.ui.segment
+            video(style="width: 100%; height: 140px; background-color: black;", controls)
+                source(src="{{source.path}}", type="{{source.type}}")
+            div.ui.olive.message
+                p {{source.title}}
