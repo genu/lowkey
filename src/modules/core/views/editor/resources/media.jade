@@ -1,5 +1,5 @@
 div.ui.two.column.grid(ng-controller="MediaCtrl as media")
-    div.column(ng-repeat="source in media.sources")
+    div.column(ng-repeat="source in media.sources", ng-drag='true', ng-drag-data='source', data-allow-transform='true')
         div.ui.segment
             video(style="width: 100%; height: 140px; background-color: black;", controls)
                 source(src="{{source.path}}", type="{{source.type}}")

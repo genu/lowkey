@@ -9,7 +9,9 @@
 angular.module('app', [
     'ui.router',
     'app.environment',
-    'module.core'
+    'module.core',
+    'ngDraggable',
+    'ngVis'
 ]).config(function ($urlRouterProvider, ENV) {
     $urlRouterProvider.otherwise('/app');
 }).run(function () {
