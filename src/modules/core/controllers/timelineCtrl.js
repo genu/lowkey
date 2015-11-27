@@ -1,18 +1,8 @@
 'use strict';
 
-angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $famous, $timeout, Timeline, Layer, Media, moment) {
+angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $timeout, Timeline, Layer, Media, moment) {
     var vm, media1, media3, timeline, surfaces;
     vm = this;
-
-    $timeout(function () {
-        surfaces = {
-            cursor: $famous.find('#surface-cursor')[0].renderNode
-        };
-
-    }, 1000);
-
-
-
 
     $rootScope.$watch(function () {
         return Timeline.active_layer
