@@ -1,7 +1,5 @@
-.ui.top.attached.tabular.menu
-    a.item.active(data-tab="first") Effects
-    a.item(data-tab="media") Media
-.ui.bottom.tab.attached.segment.active(data-tab="first")
-    ng-include(src="'modules/core/views/editor/resources/effects.html'")
-.ui.bottom.tab.attached.segment(data-tab="media")
-    ng-include(src="'modules/core/views/editor/resources/media.html'")
+semantic-tabs
+    semantic-tab.ui.bottom.attached.tab.segment(name="Media", active="true")
+        ng-include(src="'modules/core/views/editor/resources/media.html'")
+    semantic-tab.ui.bottom.attached.tab.segment(name="Effects")
+        ng-include(src="'modules/core/views/editor/resources/effects.html'")

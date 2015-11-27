@@ -11,7 +11,6 @@ angular.module('module.core', [
     'angularMoment',
     'ui.sortable',
     'vjs.video',
-    'famous.angular',
     'module.auth',
     'module.semantic',
     'module.effects',
