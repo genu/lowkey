@@ -1,6 +1,8 @@
 'use strict';
 
-angular.module('module.core').controller('MediaCtrl', function () {
+angular.module('module.core').controller('MediaCtrl', function (Media) {
+    var media1, media2;
+
     this.sources = [
         {
             title: "Movie Trailer",
@@ -11,6 +13,5 @@ angular.module('module.core').controller('MediaCtrl', function () {
             path: 'media/tears_of_steel.webm',
             type: 'video/webm'
         }
-    ]
-
+    ];
 });

@@ -1,8 +1,22 @@
 'use strict';
 
 angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $timeout, Timeline, Layer, Media, moment, VisDataSet, $scope) {
-    var vm, media1, media3, timeline, surfaces;
+    var vm, items, timeline;
     vm = this;
+
+    items = new VisDataSet();
+
+    this.isAddingMedia = false;
+
+    $rootScope.$on('draggable:start', function () {
+        vm.isAddingMedia = true;
+        $rootScope.$apply();
+    });
+
+    $rootScope.$on('draggable:end', function () {
+        vm.isAddingMedia = false;
+        $rootScope.$apply();
+    });
 
     $rootScope.$watch(function () {
         return Timeline.active_layer
@@ -19,38 +33,41 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
         }
     );
 
-    $rootScope.$watch(
-        function () {
-            return Timeline.cursor;
-        },
-        function (cursor) {
-            vm.cursor = cursor;
-        }
-    );
-
     this.cursor = Timeline.cursor;
     this.layers = Timeline.layers;
     this.active_layer = Timeline.active_layer;
-
-    media1 = new Media('media/sample_2.mkv', 'video/webm');
-    media3 = new Media('media/tears_of_steel.webm', 'video/webm');
-
-    var layer1 = new Layer('Layer for Media 1');
-    layer1.media = media1;
-    layer1.order = 1;
-
-    var layer3 = new Layer('Layer for Media 3');
-    layer3.media = media3;
-    layer3.order = 0;
-    layer3.in = 5000;
 
 
     $rootScope.$watch(Timeline, function (newVal) {
         console.log("Timeline changed");
     });
 
-    Timeline.addLayer(layer1);
-    Timeline.addLayer(layer3);
+    this.onAddMedia = function (source_media) {
+        var layer, media;
+
+        media = new Media(source_media.path, source_media.type);
+        layer = new Layer(media.title);
+        layer.media = media;
+
+        Timeline.addLayer(layer);
+
+        items.add({
+            id: $scope.groupCount,
+            group: $scope.groupCount,
+            content: 'video',
+            start: 0,
+            end: new Date(2015, 12, 11)
+        });
+
+        groups.add({id: $scope.groupCount, content: 'layer: ' + layer.title});
+
+        $scope.groupCount++;
+        $scope.timelineData = {
+            items: items,
+            group: groups
+        }
+    };
+
     Timeline.setTarget('#canvas');
 
     var graph2d;
@@ -61,7 +78,7 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
     $scope.onLoaded = function (graphRef) {
         console.log("timeline loaded callback", graphRef);
         graph2d = graphRef;
-        graph2d.setWindow(new Date(),  new Date(2015, 12, 20));
+        graph2d.setWindow(new Date(), new Date(2015, 12, 20));
     };
 
     $scope.setWindow = function (window) {
@@ -73,7 +90,7 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
         }
 
         graph2d.setOptions({max: $scope.timeNow});
-        graph2d.setWindow(new Date(),  new Date(2015, 12, 20));
+        graph2d.setWindow(new Date(), new Date(2015, 12, 20));
     };
 
     $scope.setNow = function (direction) {
@@ -127,6 +144,7 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
 
         graph2d.setOptions({max: $scope.timeNow});
         graph2d.setWindow(0, 1000);
+        graph2d.addCustomTime(1000, 'cursor');
     };
 
     /**
@@ -240,7 +258,6 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
 
     var start = now.clone().add(Math.random() * 200, 'hours');
     // create a dataset with items
-    var items = new VisDataSet();
     //for (var i = 0; i < itemCount; i++) {
     //    var start = now.clone().add(Math.random() * 200, 'hours');
     //    var group = Math.floor(Math.random() * groupCount);
@@ -257,11 +274,37 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
     // create visualization
     $scope.timelineOptions = {
         editable: true,
-        start: new Date(),
-        end: new Date(2015, 12, 30),
+        start: 0,
+        end: 5000, // 60 minutes
         stack: false,
-        height:"100%",
-        groupOrder: 'content'  // groupOrder can be a property name or a sorting function
+        height: "100%",
+        groupOrder: 'content',  // groupOrder can be a property name or a sorting function
+        itemsAlwaysDraggable: true,
+        timeAxis: {scale: 'millisecond', step: 1},
+        type: 'range',
+        showCurrentTime: false,
+        format: {
+            minorLabels: {
+                millisecond: 'SSS',
+                second: 's',
+                minute: 'HH:mm',
+                hour: 'HH:mm',
+                weekday: 'ddd D',
+                day: 'D',
+                month: 'MMM',
+                year: 'YYYY'
+            },
+            majorLabels: {
+                millisecond: 'HH:mm:ss',
+                second: 'D MMMM HH:mm',
+                minute: 'ddd D',
+                hour: '',
+                weekday: '',
+                day: '',
+                month: '',
+                year: ''
+            }
+        }
     };
 
     $scope.graphEvents = {
@@ -269,11 +312,6 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
         rangechanged: $scope.onRangeChanged,
         onload: $scope.onLoaded
     };
-
-    //$scope.timelineData = {
-    //    items: items,
-    //    groups: groups
-    //};
 
     $scope.timelineData = "";
 
@@ -286,38 +324,12 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
         $scope.centerAnchor = !$scope.centerAnchor
     };
 
-    $scope.draggableObjects = [ {name:'Video 1', duration: 1000},
-        {name:'Video 2', duration: 2000},
-        {name:'Video 3', duration: 3000}];
+    $scope.draggableObjects = [{name: 'Video 1', duration: 1000},
+        {name: 'Video 2', duration: 2000},
+        {name: 'Video 3', duration: 3000}];
     $scope.droppedObjects1 = [];
-    $scope.droppedObjects2= [];
+    $scope.droppedObjects2 = [];
 
     $scope.groupCount = 0;
-
-    $scope.onDropComplete1=function(data,evt){
-        console.log("objects 1 drop completed");
-        //var index = $scope.droppedObjects1.indexOf(data);
-        //if (index == -1)
-        //    $scope.droppedObjects1.push(data);
-
-
-        items.add({
-            id:  $scope.groupCount,
-            group:  $scope.groupCount,
-            content: "video",
-            start: new Date(),
-            end: new Date(2015, 12, 11),
-            type: 'box'
-        });
-
-        groups.add({id: $scope.groupCount, content: "layer: " + $scope.groupCount});
-
-        $scope.groupCount++;
-
-        $scope.timelineData = {
-            items: items,
-            groups: groups
-        };
-    };
 
 });
