@@ -57,6 +57,8 @@ angular.module('module.composition').service('Timeline', function ($rootScope, $
         }
 
         this.active_layer.media.video.play();
+
+        $rootScope.$broadcast('Timeline:playing');
     };
 
     this.pause = function () {

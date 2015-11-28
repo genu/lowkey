@@ -3,4 +3,4 @@ div(style="display: none;")
 
 .panel-body(ng-class="{dropzone: timeline.isAddingMedia}", style='height:400px;', ng-drop='true', ng-drop-success='timeline.onAddMedia($data)')
     div.message(ng-if="timeline.isAddingMedia") Drop media here
-    vis-timeline#test1(ng-if='!timeline.isAddingMedia', ng-show='true', data='timelineData', options='timelineOptions', events='graphEvents')
+    vis-timeline#test1(ng-if='!timeline.isAddingMedia', ng-show='true', data='timelineData', options='timelineOptions', events='timeline.events')
