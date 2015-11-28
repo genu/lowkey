@@ -1,10 +1,11 @@
 'use strict';
 
 angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $timeout, Timeline, Layer, Media, moment, VisDataSet, $scope) {
-    var vm, items, timeline;
+    var vm, items, groups, timeline;
     vm = this;
 
     items = new VisDataSet();
+    groups = new VisDataSet();
 
     this.isAddingMedia = false;
 
@@ -55,7 +56,7 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
             id: $scope.groupCount,
             group: $scope.groupCount,
             content: 'video',
-            start: 0,
+            start: 1000,
             end: new Date(2015, 12, 11)
         });
 
@@ -251,7 +252,7 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
 
     // create a data set with groups
     var names = ['John', 'Alston', 'Lee', 'Grant'];
-    var groups = new VisDataSet();
+
     //for (var g = 0; g < groupCount; g++) {
     //    groups.add({id: g, content: names[g]});
     //}
@@ -275,36 +276,14 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
     $scope.timelineOptions = {
         editable: true,
         start: 0,
-        end: 5000, // 60 minutes
+        end: 5000,
         stack: false,
         height: "100%",
         groupOrder: 'content',  // groupOrder can be a property name or a sorting function
         itemsAlwaysDraggable: true,
-        timeAxis: {scale: 'millisecond', step: 1},
+        timeAxis: {scale: 'second', step: 1},
         type: 'range',
-        showCurrentTime: false,
-        format: {
-            minorLabels: {
-                millisecond: 'SSS',
-                second: 's',
-                minute: 'HH:mm',
-                hour: 'HH:mm',
-                weekday: 'ddd D',
-                day: 'D',
-                month: 'MMM',
-                year: 'YYYY'
-            },
-            majorLabels: {
-                millisecond: 'HH:mm:ss',
-                second: 'D MMMM HH:mm',
-                minute: 'ddd D',
-                hour: '',
-                weekday: '',
-                day: '',
-                month: '',
-                year: ''
-            }
-        }
+        showCurrentTime: false
     };
 
     $scope.graphEvents = {
