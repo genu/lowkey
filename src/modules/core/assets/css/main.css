@@ -8,18 +8,28 @@
 .dropzone.drag-enter {
     border-style: solid;
 }
+
 .dropzone .message {
     font-weight: 400;
     text-align: center;
     margin: 2em 0;
     font-size: 32px;
 }
+
 .dropzone.drag-enter .message {
     opacity: 0.5;
 }
 
 .ui-sortable-helper {
     display: table;
+}
+
+/*Draggable directive*/
+.draggable-label {
+    border: 1px solid beige;
+    background-color: bisque;
+    padding: 5px;
+    color: #684f41;
 }
 
 /**{*/

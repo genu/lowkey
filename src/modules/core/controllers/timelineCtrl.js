@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $timeout, Timeline, Layer, Media, moment, VisDataSet, $scope) {
+angular.module('module.core').controller('TimelineCtrl', function ($compile, $interpolate, $rootScope, $timeout, Timeline, Layer, Media, moment, VisDataSet, $scope) {
     var vm, groups, groupCount, graph2d, timeline;
     vm = this;
     groups = new VisDataSet();
@@ -36,29 +36,34 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
     this.cursor = Timeline.cursor;
     this.layers = Timeline.layers;
     this.active_layer = Timeline.active_layer;
+    this.items = [];
     this.events = {
         onload: function (timeline) {
             vm.timeline = timeline;
 
             timeline.addCustomTime(1000, 'playing-cursor');
+        },
+        select: function (data) {
+            $rootScope.$broadcast('Timeline:LayerSelected', vm.items.get(data.items)[0].layer);
         }
     };
 
-    $rootScope.$watch(Timeline, function (newVal) {
-        console.log("Timeline changed");
-    });
-
     $rootScope.$on('video:timeupdate', function () {
         vm.timeline.setCustomTime(Timeline.cursor, 'playing-cursor');
+        vm.timeline.redraw();
+    });
+
+    $rootScope.$on('select', function (items, e) {
+        debugger;
     });
 
     $rootScope.$on('media:loaded', function (a, b, c) {
-        var items = new VisDataSet();
+        vm.items = new VisDataSet();
         _.forEach(Timeline.layers, function (layer) {
-            items.add({
+            vm.items.add({
                 id: groupCount,
                 group: groupCount,
-                content: layer.name,
+                layer: layer,
                 start: 0,
                 end: layer.media.video.duration() * 1000
             });
@@ -67,14 +72,12 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
 
             groupCount++;
             $scope.timelineData = {
-                items: items,
+                items: vm.items,
                 group: groups
             }
-        })
-    });
+        });
 
-    $rootScope.$on('Timeline:playing', function () {
-        console.log("playing");
+        vm.timeline.redraw();
     });
 
     this.onAddMedia = function (source_media) {
@@ -89,73 +92,45 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
 
     Timeline.setTarget('#canvas');
 
-    // ------------------------------------------------
-    // Event Handlers
-    $scope.setNow = function (direction) {
-        var range = graph2d.getWindow();
-        var interval = range.end - range.start;
-        $scope.timeNow = moment().valueOf();
-
-        if (graph2d === undefined) {
-            return;
-        }
-
-        graph2d.setOptions({max: $scope.timeNow});
-        graph2d.setWindow(0, 1000);
-    };
-
-    $scope.stepWindow = function (direction) {
-        var percentage = (direction > 0) ? 0.2 : -0.2;
-        var range = graph2d.getWindow();
-        var interval = range.end - range.start;
-
-        if (graph2d === undefined) {
-            return;
-        }
-
-        graph2d.setWindow({
-            start: 0,
-            end: 1000
-        });
-    };
-
-    $scope.zoomWindow = function (percentage) {
-        var range = graph2d.getWindow();
-        var interval = range.end - range.start;
-
-        if (graph2d === undefined) {
-            return;
-        }
-
-        graph2d.setWindow({
-            start: 0,
-            end: 1000
-        });
-    };
-
-    $scope.setDateRange = function () {
-        $scope.timeNow = moment().valueOf();
-
-        if (graph2d === undefined) {
-            return;
-        }
-
-        graph2d.setOptions({max: $scope.timeNow});
-        graph2d.setWindow(0, 1000);
-        graph2d.addCustomTime(1000, 'cursor');
-    };
-
     // create visualization
-    $scope.timelineOptions = {
+    this.options = {
         editable: true,
         start: 0,
+        min: 0,
         end: 900000,
-        stack: true,
+        align: 'left',
         height: "100%",
         groupOrder: 'content',  // groupOrder can be a property name or a sorting function
         timeAxis: {scale: 'second', step: 15},
         type: 'range',
         showCurrentTime: false,
+        //moveable: false,
+        //zoomable: false,
+        template: function (media) {
+            var html;
+            html = '' +
+                '<div class="ui positive message" droppable>' +
+                '   <div class="header" style="border 1px solid black; padding:30px;">' + media.layer.name + '</div>' +
+                '   <table class="ui definition compact small table">' +
+                '       <thead>' +
+                '           <tr>' +
+                '               <th></th>' +
+                '               <th>Effect</th>' +
+                '           </tr>' +
+                '       </thead>' +
+                '       <tbody>' +
+                '           <tr>' +
+                '               <td>off</td>' +
+                '               <td>BW</td>' +
+                '           </tr>' +
+                '       </tbody>' +
+                '   </table>' +
+                '</div>';
+
+            return $compile(html)($rootScope.$new()).html();
+        },
+        multiselect: true,
+        autoResize: false,
         format: {
             minorLabels: {
                 millisecond: 'SSS',
@@ -183,6 +158,4 @@ angular.module('module.core').controller('TimelineCtrl', function ($rootScope, $
     $scope.timelineData = "";
 
     $scope.timelineLoaded = true;
-
-
 });

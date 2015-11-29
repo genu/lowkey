@@ -3,3 +3,5 @@ semantic-tabs
         ng-include(src="'modules/core/views/editor/resources/media.html'")
     semantic-tab.ui.bottom.attached.tab.segment(name="Effects")
         ng-include(src="'modules/core/views/editor/resources/effects.html'")
+    semantic-tab.ui.bottom.attached.tab.segment(name="Properties - {{resources.active_layer.name}}", ng-if="resources.active_layer")
+        ng-include(src="'modules/core/views/editor/resources/properties.html'")

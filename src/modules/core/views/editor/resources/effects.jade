@@ -1,54 +1,7 @@
-.ui.center.sligned.basic.segment
-    .ui.menu
-        a.browse.item(semantic-popup, transition="vertical flip", position="bottom left")
-            i.add.icon
-            | Add Effect
-        .ui.popup.transition.hidden.fluid
-            .ui.middle.aligned.divided.list
-                .item(ng-repeat="effect in app.effects")
-                    .left.floated.content
-                        .ui.button.mini(ng-click="app.addEffect(effect[0])") Add
-                    .content
-                        .header {{effect[1].title}}
-                        .description {{effect[1].description}}
-    .ui.horizontal.divider Applied effects
-    .ui.info.message(ng-if="app.active_effects.length === 0")
-        .header You have not added any effects
-    table.ui.compact.celled.striped.definition.table(ui-sortable="app.sortableEffectsOptions", ng-model="app.active_effects", ng-if="app.active_effects.length > 0")
-        thead
-            tr
-                th
-                th Enabled
-                th(colspan="2") Effect
-        tbody(ng-repeat="effect in app.active_effects")
-            tr
-                th.collapsing
-                    i.link.handle.list.layout.icon
-                    i.link.remove.icon(ng-click="app.removeEffect(effect)")
-                td
-                    .ui.fitted.slider.checkbox
-                        input(type="checkbox", ng-model="effect.enabled" ng-change="app.effectsChanged()")
-                        label
-                td {{effect.node.title}}
-                td.right.aligned.collapsing
-                    i.settings.icon.link(ng-click="effect.isConfiguring = !effect.isConfiguring", ng-class="{'bordered inverted teal': effect.isConfiguring}")
-                    i.options.icon.link(ng-click="effect.isAnimating = !effect.isAnimating", ng-class="{'bordered inverted teal': effect.isAnimating}")
-            tr(ng-if="effect.isConfiguring")
-                td Config
-                td(colspan="3")
-                    .content
-                        form.ui.form
-                            .field(ng-repeat="param in effect.params")
-                                label(ng-if="param.title != 'source'") {{param.title | uppercase}}
-                                div(ng-switch="param.type")
-                                    div(ng-switch-when="enum")
-                                        .ui.selection.dropdown(semantic-dropdown, ng-model="effect.node[param.title]")
-                                            i.dropdown.icon
-                                            .default.text {{param.defaultValue}}
-                                            .menu
-                                                .item(ng-repeat="option in param.options") {{option}}
-                                    div(ng-switch-when="number")
-                                        rzslider(rz-slider-floor="param.min", rz-slider-ceil="param.max == 'Infinity' ? 200 : param.max", rz-slider-step="0.01", rz-slider-model="effect.node[param.title]", rz-slider-precision="2")
-            tr(ng-if="effect.isAnimating")
-                td Animate
-                td(colspan="3") Animating prefs
+div.ui.three.column.grid(style="overflow: auto; height: 453px")
+    img#effect-source(src="modules/core/assets/images/buzz.png", style="display: none;")
+    canvas(id="effect-sample", style="width: 100%; display: none;")
+    div.column(ng-repeat="sample in resources.samples")
+        div.ui
+            img(data-ng-src="{{sample.img}}", style="width: 100%", draggable, label="{{sample.title}}")
+            p(style="text-align: center") {{sample.title}}

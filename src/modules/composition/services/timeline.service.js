@@ -17,13 +17,19 @@ angular.module('module.composition').service('Timeline', function ($rootScope, $
     var frameFn = null;
 
     $rootScope.$on('video:timeupdate', function (event, media) {
-        var playable;
+        var playable, reformat;
 
         playable = vm.getPlayable();
 
         vid = media.video;
         vm.cursor = media.video.currentTime() * 1000;
-        target.source = playable.source;
+        reformat = seriously.transform('reformat');
+        reformat.width = target.width;
+        reformat.height = target.height;
+        reformat.mode = "distort";
+        reformat.source = playable.source;
+
+        target.source = reformat;
 
         // If the vid
         if (playable.media.video.paused()) {

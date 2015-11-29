@@ -19,10 +19,7 @@ angular.module('module.core').config(function ($stateProvider, USER_ROLES) {
                 },
                 'timeline': {
                     templateUrl: 'modules/core/views/editor/timeline/main.html',
-                    controller: 'TimelineCtrl as timeline',
-                    onEnter: function(){
-                        console.log("entered state");
-                    }
+                    controller: 'TimelineCtrl as timeline'
                 }
             }
         })
