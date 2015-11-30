@@ -1,6 +1,13 @@
-div(style="display: none;")
-    video(ng-repeat="layer in timeline.layers", id="{{layer.media.id}}", height="120px", width="120px", media="layer.media")
+div.ui.segment
+    h2.ui.header.dash_header
+        i.plug.icon
+        div.content
+            | Layers
+            div.sub.header LAYERs desc
+    div.ui.divider
+    div(style="display: none;")
+        video(ng-repeat="layer in timeline.layers", id="{{layer.media.id}}", height="120px", width="120px", media="layer.media")
 
-.panel-body(ng-class="{dropzone: timeline.isAddingMedia}", style='height:400px;', ng-drop='true', ng-drop-success='timeline.onAddMedia($data)')
-    div.message(ng-if="timeline.isAddingMedia") Drop media here
-    vis-timeline#test1(ng-if='!timeline.isAddingMedia', ng-show='true', data='timelineData', options='timeline.options', events='timeline.events')
+    .panel-body(ng-class="{dropzone: timeline.isAddingMedia}", style='height:400px;', ng-drop='true', ng-drop-success='timeline.onAddMedia($data)')
+        div.message(ng-if="timeline.isAddingMedia") Drop media here
+        vis-timeline#test1(ng-if='!timeline.isAddingMedia', ng-show='true', data='timelineData', options='timeline.options', events='timeline.events')

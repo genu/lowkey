@@ -1,7 +1,14 @@
-semantic-tabs
-    semantic-tab.ui.bottom.attached.tab.segment(name="Media", active="true")
-        ng-include(src="'modules/core/views/editor/resources/media.html'")
-    semantic-tab.ui.bottom.attached.tab.segment(name="Effects")
-        ng-include(src="'modules/core/views/editor/resources/effects.html'")
-    semantic-tab.ui.bottom.attached.tab.segment(name="Properties - {{resources.active_layer.name}}", ng-if="resources.active_layer")
-        ng-include(src="'modules/core/views/editor/resources/properties.html'")
+div.ui.segment
+    h2.ui.header.dash_header
+        i.plug.icon
+        div.content
+            | Resources
+            div.sub.header resources desc
+    div.ui.divider
+    semantic-tabs
+        semantic-tab.ui.bottom.attached.tab.segment(name="Media", active="true")
+            ng-include(src="'modules/core/views/editor/resources/media.html'")
+        semantic-tab.ui.bottom.attached.tab.segment(name="Effects")
+            ng-include(src="'modules/core/views/editor/resources/effects.html'")
+        semantic-tab.ui.bottom.attached.tab.segment(name="Properties - {{resources.active_layer.name}}", ng-if="resources.active_layer")
+            ng-include(src="'modules/core/views/editor/resources/properties.html'")

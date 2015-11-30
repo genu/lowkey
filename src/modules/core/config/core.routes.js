@@ -9,6 +9,10 @@ angular.module('module.core').config(function ($stateProvider, USER_ROLES) {
                     templateUrl: 'modules/core/views/layouts/app.html',
                     controller: 'AppCtrl as app'
                 },
+                'properties': {
+                    templateUrl: 'modules/core/views/editor/properties/main.html',
+                    controller: 'PropertiesCtrl as properties'
+                },
                 'previewer': {
                     templateUrl: 'modules/core/views/editor/previewer/main.html',
                     controller: 'PreviewerCtrl as previewer'

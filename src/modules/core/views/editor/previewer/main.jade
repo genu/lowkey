@@ -1,10 +1,17 @@
-.ui.two.column.centered.grid.segment
-    canvas#canvas(width="720px", height="480px")
-.ui.two.column.centered.grid
-    .ui.icon.buttons
-        button.ui.button(ng-click="previewer.play()")
-            i.play.icon
-        button.ui.button(ng-click="previewer.pause()")
-            i.pause.icon
-        button.ui.button(ng-click="previewer.next()")
-            i.fast.forward.icon
+div.ui.segment
+    h2.ui.header.dash_header
+        i.plug.icon
+        div.content
+            | Preview
+            div.sub.header previewr desc
+    div.ui.divider
+    .ui.two.column.centered.grid.segment
+        canvas#canvas(width="320px", height="240px")
+    .ui.two.column.centered.grid
+        .ui.icon.buttons
+            button.ui.button(ng-click="previewer.play()")
+                i.play.icon
+            button.ui.button(ng-click="previewer.pause()")
+                i.pause.icon
+            button.ui.button(ng-click="previewer.next()")
+                i.fast.forward.icon

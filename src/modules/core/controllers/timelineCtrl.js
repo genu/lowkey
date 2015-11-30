@@ -111,23 +111,9 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
             html = '' +
                 '<div class="ui positive message" droppable>' +
                 '   <div class="header" style="border 1px solid black; padding:30px;">' + media.layer.name + '</div>' +
-                '   <table class="ui definition compact small table">' +
-                '       <thead>' +
-                '           <tr>' +
-                '               <th></th>' +
-                '               <th>Effect</th>' +
-                '           </tr>' +
-                '       </thead>' +
-                '       <tbody>' +
-                '           <tr>' +
-                '               <td>off</td>' +
-                '               <td>BW</td>' +
-                '           </tr>' +
-                '       </tbody>' +
-                '   </table>' +
                 '</div>';
 
-            return $compile(html)($rootScope.$new()).html();
+            return html;
         },
         multiselect: true,
         autoResize: false,

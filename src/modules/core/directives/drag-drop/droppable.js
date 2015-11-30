@@ -3,13 +3,15 @@
 angular.module('module.core').directive('droppable', function () {
     return {
         restrict: 'A',
+        scope: {
+            hoverClass: '@',
+            onDrop: '='
+        },
         link: function (scope, element) {
-            console.log(element.parent().parent());
-            //$(element).droppable({
-            //    drop: function () {
-            //        alert('dropped')
-            //    }
-            //});
+            $(element).droppable({
+                drop: scope.onDrop,
+                hoverClass: scope.hoverClass
+            });
         }
     }
 });

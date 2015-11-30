@@ -1,7 +1,7 @@
-div.ui.three.column.grid(style="overflow: auto; height: 453px")
+div.ui.three.column.grid(style="overflow: auto; height: 234px")
     img#effect-source(src="modules/core/assets/images/buzz.png", style="display: none;")
     canvas(id="effect-sample", style="width: 100%; display: none;")
     div.column(ng-repeat="sample in resources.samples")
         div.ui
-            img(data-ng-src="{{sample.img}}", style="width: 100%", draggable, label="{{sample.title}}")
+            img(data-ng-src="{{sample.img}}", style="width: 100%", draggable, data="sample", label="{{sample.title}}")
             p(style="text-align: center") {{sample.title}}
