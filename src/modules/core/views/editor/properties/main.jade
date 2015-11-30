@@ -1,9 +1,9 @@
 div.ui.segment(droppable, hover-class="tertiary", on-drop="properties.onDrop")
     h2.ui.header.dash_header
-        i.plug.icon
+        i.paint.brush.icon
         div.content
-            | Layer Properties
-            div.sub.header {{properties.active_layer.name}}
+            | Properties
+            div.sub.header(ng-if="properties.active_layer !== null") Properties for {{properties.active_layer.name}}
             div.sub.header(ng-if="properties.active_layer === null") No layer selected
     div.ui.divider
     .ui.info.message(ng-if="properties.active_layer.effects.length === 0")
@@ -18,7 +18,7 @@ div.ui.segment(droppable, hover-class="tertiary", on-drop="properties.onDrop")
             tr
                 th.collapsing
                     i.link.handle.list.layout.icon
-                    i.link.remove.icon(ng-click="app.removeEffect(effect)")
+                    i.link.remove.icon(ng-click="properties.removeEffect(effect)")
                 td
                     .ui.fitted.slider.checkbox
                         input(type="checkbox", ng-model="effect.enabled" ng-change="app.effectsChanged()")

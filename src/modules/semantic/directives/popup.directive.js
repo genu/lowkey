@@ -12,10 +12,18 @@ angular.module('module.semantic').directive('semanticPopup', function () {
             transition: '@',
             hoverable: '=',
             closable: '=',
-            inverted: '='
+            inverted: '=',
+            content: '@'
         },
         link: function (scope, element) {
+            var content;
+            if (!_.isEmpty(scope.content)) {
+                debugger;
+                content = '<div style="display:none;">' + scope.content + '</div>';
+                $(element).prepend(content);
+            }
             $(element[0]).popup({
+                popup: _.isEmpty(scope.content) ? false : $(content),
                 exclusive: _.isUndefined(scope.exclusive) ? false : scope.exclusive,
                 position: _.isUndefined(scope.position) ? 'top left' : scope.position,
                 on: _.isUndefined(scope.on) ? 'click' : scope.on,

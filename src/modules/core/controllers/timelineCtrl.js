@@ -1,11 +1,10 @@
 'use strict';
 
 angular.module('module.core').controller('TimelineCtrl', function ($compile, $interpolate, $rootScope, $timeout, Timeline, Layer, Media, moment, VisDataSet, $scope) {
-    var vm, groups, groupCount, graph2d, timeline;
+    var vm;
     vm = this;
-    groups = new VisDataSet();
-    groupCount = 0;
 
+    vm.data = '';
     this.isAddingMedia = false;
 
     $rootScope.$on('draggable:start', function () {
@@ -48,6 +47,14 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
         }
     };
 
+    this.zoomIn = function () {
+        console.log("zoomin");
+    };
+
+    this.fitAll = function () {
+        this.timeline.fit();
+    };
+
     $rootScope.$on('video:timeupdate', function () {
         vm.timeline.setCustomTime(Timeline.cursor, 'playing-cursor');
         vm.timeline.redraw();
@@ -59,21 +66,24 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
 
     $rootScope.$on('media:loaded', function (a, b, c) {
         vm.items = new VisDataSet();
-        _.forEach(Timeline.layers, function (layer) {
+        vm.groups = new VisDataSet();
+
+        _.forEach(Timeline.layers, function (layer, index) {
+            index++;
             vm.items.add({
-                id: groupCount,
-                group: groupCount,
+                id: index,
+                group: index,
                 layer: layer,
                 start: 0,
-                end: layer.media.video.duration() * 1000
+                end: layer.media.video.duration() * 1000,
+                className: 'blah'
             });
 
-            groups.add({id: groupCount, content: 'layer: ' + layer.name});
+            vm.groups.add({id: index, content: layer});
 
-            groupCount++;
-            $scope.timelineData = {
+            vm.data = {
                 items: vm.items,
-                group: groups
+                groups: vm.groups
             }
         });
 
@@ -100,27 +110,44 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
         end: 900000,
         align: 'left',
         height: "100%",
-        groupOrder: 'content',  // groupOrder can be a property name or a sorting function
         timeAxis: {scale: 'second', step: 15},
         type: 'range',
         showCurrentTime: false,
-        //moveable: false,
-        //zoomable: false,
+        zoomMax: 1000 * 60 * 20,
+        stack: false,
         template: function (media) {
             var html;
             html = '' +
-                '<div class="ui positive message" droppable>' +
-                '   <div class="header" style="border 1px solid black; padding:30px;">' + media.layer.name + '</div>' +
+                '<div class="ui small info message" style="padding: 5px;">' +
+                '   <div class="header">' + media.layer.name + '</div>' +
                 '</div>';
 
             return html;
+        },
+        groupOrder: function (layer1, layer2) {
+            return layer1.content.order - layer2.content.order;
+        },
+        groupOrderSwap: function (layer1, layer2, gropus) {
+            var a_order = layer1.content.order;
+
+            layer1.content.order = layer2.content.order;
+            layer2.content.order = a_order;
+        },
+        groupTemplate: function (group) {
+            return '<div style="margin-top: 50px;">Sequence ' + group.content.order + '</div>';
+        },
+        itemsAlwaysDraggable: true,
+        groupEditable: true,
+        orientation:{
+            axis: 'top',
+            item: 'bottom'
         },
         multiselect: true,
         autoResize: false,
         format: {
             minorLabels: {
                 millisecond: 'SSS',
-                second: 's',
+                second: ':s',
                 minute: 'HH:mm',
                 hour: 'HH:mm',
                 weekday: 'ddd D',
@@ -140,8 +167,6 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
             }
         }
     };
-
-    $scope.timelineData = "";
 
     $scope.timelineLoaded = true;
 });

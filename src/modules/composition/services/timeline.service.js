@@ -46,6 +46,7 @@ angular.module('module.composition').service('Timeline', function ($rootScope, $
     });
 
     this.addLayer = function (layer) {
+        layer.order = this.layers.length; // Automaically make it the last layer
         this.layers.push(layer);
 
         $rootScope.$broadcast('Timeline:addLayer');

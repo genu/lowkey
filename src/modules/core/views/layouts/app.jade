@@ -6,10 +6,9 @@
                 a.ui.inverted.button Log in
                 a.inverted.button Sign up
 .ui.vertical.stripe.segment
-    .ui.grid
-        .three.column.row
+    .ui.three.column.padded.very.relaxed.grid
             .column(ui-view="properties@")
             .column(ui-view="previewer@")
             .column(ui-view="resources@")
-        .one.column.row
-            .column(ui-view="timeline@")
+    .ui.one.column.padded.grid
+        .column(ui-view="timeline@")

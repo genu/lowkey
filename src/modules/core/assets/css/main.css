@@ -32,6 +32,15 @@
     color: #684f41;
 }
 
+/*VisJS*/
+.vis-time-axis.vis-foreground {
+    background-color: #E8E8E8;
+}
+.playing-cursor {
+    width: 3px;
+    border-top: 51px solid #375286;
+}
+
 /**{*/
 /*-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;*/
 /*}*/
