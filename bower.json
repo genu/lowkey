@@ -33,6 +33,7 @@
     "angular-mocks": "~1.4.1"
   },
   "resolutions": {
-    "angular": ">= 1.4.8"
+    "angular": ">= 1.4.8",
+    "vis": "~4.10.0"
   }
 }
