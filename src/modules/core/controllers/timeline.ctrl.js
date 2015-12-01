@@ -4,13 +4,14 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
     var vm;
     vm = this;
 
-    vm.data = '';
     this.isScrubbing = false;
     this.cursor = Timeline.cursor;
     this.sequences = Timeline.sequences;
     this.active_layer = Timeline.active_layer;
-    this.items = new VisDataSet();
-    this.groups = new VisDataSet();
+    this.data = {
+        items: new VisDataSet(),
+        groups: new VisDataSet()
+    };
 
     $rootScope.$watch(function () {
         return Timeline.cursor;
@@ -81,7 +82,7 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
         },
         select: function (data) {
             if (data.items.length > 0) {
-                $rootScope.$broadcast('Timeline:LayerSelected', vm.items.get(data.items)[0].segment);
+                $rootScope.$broadcast('Timeline:LayerSelected', vm.data.items.get(data.items)[0].segment);
             } else {
                 $rootScope.$broadcast('Timeline:LayerDeselected');
             }
@@ -116,8 +117,7 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
         Timeline.addSequence(sequence);
 
         // Add to vis
-        this.groups.add({id: sequence.$id, title: sequence.$id, content: sequence, className: 'sequence'});
-        this.timeline.setGroups(this.groups);
+        this.data.groups.add({id: sequence.$id, title: sequence.$id, content: sequence, className: 'sequence'});
     };
 
     // Configure VisJS
@@ -208,14 +208,12 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
         // Add the new segment to the vis timeline
         sequence = Timeline.getSequenceBySegment(segment);
 
-        vm.items.add({
+        vm.data.items.add({
             id: segment.$id,
             group: sequence.$id,
             segment: segment,
             start: 0,
             end: segment.media.video.duration() * 1000
         });
-
-        vm.timeline.setItems(vm.items);
     });
 });
