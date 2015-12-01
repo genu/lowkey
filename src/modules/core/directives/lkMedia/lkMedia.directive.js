@@ -18,12 +18,12 @@ angular.module('module.core').directive('media', function ($rootScope, Video) {
 
             // Handle events
             video.on('timeupdate', function () {
-                $rootScope.$broadcast('video:timeupdate', scope.media);
+                $rootScope.$broadcast('Media:TimeUpdate', scope.media);
                 $rootScope.$apply();
             });
 
             video.on('loadedmetadata', function () {
-                $rootScope.$broadcast("media:loaded", {id: scope.media.id, element: element[0]});
+                $rootScope.$broadcast("Media:Loaded", {id: scope.media.id, element: element[0]});
             });
         }
     }

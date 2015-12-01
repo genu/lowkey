@@ -6,7 +6,7 @@
  * @description
  * Application level functions
  */
-angular.module('module.core').controller('AppCtrl', function ($rootScope, Layer, Effects) {
+angular.module('module.core').controller('AppCtrl', function ($rootScope, Effects) {
     this.effects = Effects.getAvailable();
     this.active_effects = Effects.getActive();
 

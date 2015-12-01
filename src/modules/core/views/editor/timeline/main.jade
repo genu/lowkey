@@ -7,20 +7,22 @@ div.ui
     div.ui.horizontal.divider
         i.ellipsis.horizontal.icon
     div(style="display: none;")
-        video(ng-repeat="layer in timeline.layers", id="{{layer.media.id}}", height="120px", width="120px", media="layer.media")
-    div(ng-class="{dropzone: timeline.isAddingMedia}", style='height:400px;', ng-drop='true', ng-drop-success='timeline.onAddMedia($data)')
-        div.ui.icon.medium.vertical.left.floated.black.buttons(style="margin: 4px;")
-            button.ui.button(ng-click="timeline.addSequence()")
+        img#colorbars(src="media/color_bars.jpg")
+        div(ng-repeat="sequence in timeline.sequences")
+            video(ng-repeat="segment in sequence.segments", id="{{segment.media.id}}", height="120px", width="120px", media="segment.media")
+    div(style='height:400px;')
+        div.ui.icon.medium.vertical.left.floated.buttons(style="margin: 4px;")
+            button.ui.green.button(ng-click="timeline.addSequence()")
                 i.plus.icon
-            button.ui.button
+            button.ui.black.button
                 i.cut.icon
-            button.ui.button
+            button.ui.black.button
                 i.resize.horizontal.icon
-            button.ui.button
+            button.ui.black.button
                 i.pointing.up.icon
-            button.ui.button
+            button.ui.black.button
                 i.ticket.icon
-            button.ui.button
+            button.ui.black.button
                 i.crosshairs.icon
         div.ui.icon.medium.vertical.right.floated.black.buttons(style="margin: 4px;")
             button.ui.button(ng-click="timeline.zoomIn()")
@@ -29,5 +31,4 @@ div.ui
                 i.zoom.out.icon
             button.ui.button(ng-click="timeline.fitAll()")
                 i.expand.icon
-        div.message(ng-if="timeline.isAddingMedia") Drop media here
-        vis-timeline#test1(ng-if='!timeline.isAddingMedia', data='timeline.data', options='timeline.options', events='timeline.events')
+        vis-timeline(data='timeline.data', options='timeline.options', events='timeline.events')

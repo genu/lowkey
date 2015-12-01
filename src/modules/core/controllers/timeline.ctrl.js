@@ -1,30 +1,102 @@
 'use strict';
 
-angular.module('module.core').controller('TimelineCtrl', function ($compile, $interpolate, $rootScope, $timeout, Timeline, Layer, Sequence, Media, moment, VisDataSet, Hash) {
+angular.module('module.core').controller('TimelineCtrl', function ($compile, $interval, $interpolate, $rootScope, $timeout, Timeline, Segment, Sequence, Media, moment, VisDataSet, Hash) {
     var vm;
     vm = this;
 
     vm.data = '';
-    this.isAddingMedia = false;
+    this.isScrubbing = false;
     this.cursor = Timeline.cursor;
-    this.layers = Timeline.layers;
+    this.sequences = Timeline.sequences;
     this.active_layer = Timeline.active_layer;
     this.items = new VisDataSet();
     this.groups = new VisDataSet();
+
+    $rootScope.$watch(function () {
+        return Timeline.cursor;
+    }, function (new_cursor) {
+        if (!_.isUndefined(vm.timeline)) {
+            if (!vm.isScrubbing) {
+                vm.timeline.setCustomTime(vm.cursor, 'playing-cursor');
+            }
+        }
+
+        vm.cursor = new_cursor;
+    });
+    /* Background processes */
+    $interval(function () {
+        // Make each sequence a droppable target
+        $('.draggable.sequence').droppable({
+            hoverClass: 'sequence-drop-hover',
+            drop: vm.onMediaDrop
+        })
+    }, 1000);
+
+    /* Events */
+    this.onMoveSequence = function (sequence, callback) {
+        callback(sequence);
+    };
+
+    this.onChangeSegment = function (item, callback) {
+        var lTrim, rTrim, actual_duration, trimed_duration, offset;
+
+        actual_duration = item.segment.out - item.segment.in;
+
+        lTrim = moment(item.start).diff(vm.timeline_start, 'milliseconds');
+        rTrim = moment(item.end).diff(vm.timeline_start, 'milliseconds');
+
+        trimed_duration = rTrim - lTrim;
+
+        if (trimed_duration <= actual_duration) {
+            item.segment.lTrim = lTrim;
+            item.segment.rTrim = rTrim;
+            callback(item);
+        }
+    };
+
+    this.onMediaDrop = function (event, ui) {
+        var model, segment;
+
+        model = ui.draggable.data('model');
+
+        segment = new Segment(model.title);
+        segment.media = new Media(model.path, model.type);
+
+        Timeline.getSequenceById(this.title).addSegment(segment);
+    };
+
     this.events = {
         onload: function (timeline) {
             vm.timeline = timeline;
 
+            vm.timeline_start = moment(vm.timeline.getWindow().start);
+
             timeline.addCustomTime(1000, 'playing-cursor');
         },
-        onAddGroup: function(a,b,c,d){
+        onaddgroup: function (a, b, c, d) {
+            debugger;
+        },
+        onupdate: function (a, b, c, d) {
             debugger;
         },
         select: function (data) {
             $rootScope.$broadcast('Timeline:LayerSelected', vm.items.get(data.items)[0].layer);
+        },
+        rangechange: function (start, end, byUser) {
+
+        },
+        timechange: function (time_ref) {
+            vm.isScrubbing = true;
+            if (time_ref.id == 'playing-cursor') {
+                Timeline.cursor = moment(time_ref.time).diff(vm.timeline_start, 'milliseconds');
+            }
+        },
+        timechanged: function (time_ref) {
+            vm.isScrubbing = false;
         }
     };
 
+    /* User Actions */
     this.zoomIn = function () {
         console.log("zoomin");
     };
@@ -33,23 +105,21 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
         this.timeline.fit();
     };
 
-    this.onAddMedia = function (source_media) {
-        var layer, media;
-
-        media = new Media(source_media.path, source_media.type);
-        layer = new Layer(source_media.title);
-        layer.media = media;
-
-        Timeline.addLayer(layer);
-    };
-
     this.addSequence = function () {
-        Timeline.addSequence(new Sequence());
+        var sequence;
+
+        sequence = new Sequence();
+        Timeline.addSequence(sequence);
+
+        // Add to vis
+        this.groups.add({id: sequence.$id, title: sequence.$id, content: sequence, className: 'sequence'});
+        this.timeline.setGroups(this.groups);
     };
 
     // Configure VisJS
     this.options = {
         editable: true,
+        selectable: true,
         start: 0,
         min: 0,
         end: 900000,
@@ -60,11 +130,11 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
         showCurrentTime: false,
         zoomMax: 1000 * 60 * 20,
         stack: false,
-        template: function (media) {
+        template: function (item) {
             var html;
             html = '' +
                 '<div class="ui small info message" style="padding: 5px;">' +
-                '   <div class="header">' + media.layer.name + '</div>' +
+                '   <div class="header">' + item.segment.name + '</div>' +
                 '</div>';
 
             return html;
@@ -79,11 +149,16 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
             layer2.content.order = a_order;
         },
         groupTemplate: function (group) {
-            return '<div style="margin-top: 50px;">Sequence ' + group.content.order + '</div>';
+            return '<div style="margin-top: 50px;">Sequence ' + (group.content.order + 1) + '</div>';
         },
-        onAddGroup: function(a,b,c){
+        onAdd: function (a, b, c, d) {
+
+        },
+        onAddGroup: function (a, b, c) {
             debugger;
         },
+        onMoveGroup: this.onMoveSequence,
+        onMoving: this.onChangeSegment,
         itemsAlwaysDraggable: true,
         groupEditable: true,
         orientation: {
@@ -120,21 +195,6 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
 
 
     // Handle events
-    $rootScope.$on('Timeline:addSequence', function (e, sequence) {
-        vm.groups.add({id: sequence.$id, title: sequence.$id, content: sequence});
-        vm.timeline.setGroups(vm.groups);
-    });
-
-    $rootScope.$on('draggable:start', function () {
-        vm.isAddingMedia = true;
-        $rootScope.$apply();
-    });
-
-    $rootScope.$on('draggable:end', function () {
-        vm.isAddingMedia = false;
-        $rootScope.$apply();
-    });
-
     $rootScope.$on('video:timeupdate', function () {
         vm.timeline.setCustomTime(Timeline.cursor, 'playing-cursor');
         vm.timeline.redraw();
@@ -142,6 +202,22 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
 
     $rootScope.$on('select', function (items, e) {
         debugger;
+    });
+
+    $rootScope.$on('Segment:Initialized', function (e, segment) {
+        var sequence;
+
+        sequence = Timeline.getSequenceBySegment(segment);
+
+        vm.items.add({
+            id: segment.$id,
+            group: sequence.$id,
+            segment: segment,
+            start: 0,
+            end: segment.media.video.duration() * 1000
+        });
+
+        vm.timeline.setItems(vm.items);
     });
 
     $rootScope.$on('media:loaded', function (a, b, c) {

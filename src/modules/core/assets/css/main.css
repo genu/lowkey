@@ -33,12 +33,26 @@
 }
 
 /*VisJS*/
+.vis-item-content {
+    float: left;
+}
+
 .vis-time-axis.vis-foreground {
     background-color: #E8E8E8;
 }
+
 .playing-cursor {
     width: 3px;
     border-top: 51px solid #375286;
+}
+
+.sequence {
+    font-weight: bold;
+}
+
+.sequence-drop-hover {
+    background-color: #00B5AD;
+    color: white !important;
 }
 
 /**{*/

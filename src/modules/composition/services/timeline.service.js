@@ -1,53 +1,54 @@
 'use strict';
 
-angular.module('module.composition').service('Timeline', function ($rootScope, $interval, Seriously, moment) {
+angular.module('module.composition').service('Timeline', function ($rootScope, $timeout, $interval, Seriously, moment) {
     var vm = this;
+
+    this.active_segment = null;
     this.active_layer = null;
     this.sequences = [];
-    this.layers = [];
+    this.cursor = 0;
+    this.isPaused = true;
+
     var seriously = Seriously.getInstance();
     var target = null;
 
-    var framerate = 1;
-    this.cursor = 0;
-    var start = 0;
-    var end = 100;
-    var vid = null;
+    var player;
 
-    //The function that generates a frame at each interval
-    var frameFn = null;
-
-    $rootScope.$on('video:timeupdate', function (event, media) {
-        var playable, reformat;
-
-        playable = vm.getPlayable();
-
-        vid = media.video;
-        vm.cursor = media.video.currentTime() * 1000;
-        reformat = seriously.transform('reformat');
-        reformat.width = target.width;
-        reformat.height = target.height;
-        reformat.mode = "distort";
-        reformat.source = playable.source;
-
-        target.source = reformat;
-
-        // If the vid
-        if (playable.media.video.paused()) {
-            playable.media.video.play();
+    $rootScope.$on('Timeline:RequestToSwitchSegmentContext', function () {
+        // Stop active segment
+        if (!_.isNull(vm.active_segment)) {
+            vm.active_segment.media.video.pause();
         }
     });
 
-    $rootScope.$on('media:loaded', function (event, options) {
-        var layer = _.filter(vm.layers, function (layer) {
-            return layer.media.id === options.id;
-        });
+    $rootScope.$on('Timeline:SwitchSegmentContext', function () {
+        target.source = vm.videoScale(vm.active_segment.render());
 
-        layer[0].initSource(options.element);
+        // Play from cursor
+        vm.active_segment.playAt(vm.cursor);
     });
 
-    this.addSequence = function (sequence) {
+    $rootScope.$on('Media:Loaded', function (event, media_ref) {
+        //Initialize the segment with the new media
+        _.forEach(vm.sequences, function (sequence) {
+            _.forEach(sequence.segments, function (segment) {
+                if (!segment.isInitialized && segment.media.id === media_ref.id) {
+                    segment.initSource(media_ref.element);
+                }
+            })
+        });
+    });
 
+    this.getSequenceBySegment = function (segment) {
+        return _.find(this.sequences, function (sequence) {
+            return !_.isUndefined(sequence.getSegmentById(segment.$id));
+        });
+    };
+
+    this.getSequenceById = function (id) {
+        return _.filter(this.sequences, function (sequence) {
+            return sequence.$id === _.parseInt(id);
+        })[0];
     };
 
     this.addSequence = function (sequence) {
@@ -57,53 +58,81 @@ angular.module('module.composition').service('Timeline', function ($rootScope, $
         $rootScope.$broadcast('Timeline:addSequence', sequence);
     };
 
-    this.addLayer = function (layer) {
-        layer.order = this.layers.length; // Automaically make it the last layer
-        this.layers.push(layer);
-
-        $rootScope.$broadcast('Timeline:addLayer');
-    };
-
     this.setTarget = function (target_ref) {
         target = seriously.target(target_ref);
 
         seriously.go();
     };
 
+    this.videoScale = function (source) {
+        var reformat;
+        reformat = seriously.transform('reformat');
+        reformat.width = target.width;
+        reformat.height = target.height;
+        reformat.mode = "distort";
+        reformat.source = source;
+
+        return reformat;
+
+    };
+
     this.play = function () {
-        if (_.isNull(this.active_layer)) {
-            this.getPlayable();
-        }
+        player = $interval(function () {
+            var hasSegments, sortedSequences;
 
-        this.active_layer.media.video.play();
+            hasSegments = false;
 
-        $rootScope.$broadcast('Timeline:playing');
+            vm.cursor += 500;
+
+            // Check for available segments
+            _.forEach(vm.sequences, function (sequence) {
+                if (sequence.hasSegments()) {
+                    hasSegments = true;
+                }
+            });
+
+            if (!hasSegments) {
+                target.source = vm.videoScale('#colorbars');
+                vm.active_segment = null;
+            } else {
+                //Figure out which segment to play
+                sortedSequences = _.sortBy(vm.sequences, function (sequence) {
+                    return sequence.order;
+                });
+
+                _.forEach(sortedSequences, function (sequence) {
+                    var segment;
+
+                    segment = sequence.getSegmentAtTime(vm.cursor);
+
+                    if (!_.isNull(segment)) {
+                        if (_.isNull(vm.active_segment) || segment.$id !== vm.active_segment.$id) {
+                            $rootScope.$broadcast('Timeline:RequestToSwitchSegmentContext');
+                            vm.active_segment = segment;
+                            $rootScope.$broadcast('Timeline:SwitchSegmentContext');
+                            vm.isPaused = false;
+                        } else if (vm.isPaused) {
+                            segment.playAt(vm.cursor);
+                            vm.isPaused = false;
+                        }
+                    } else {
+                        target.source = vm.videoScale('#colorbars');
+                        vm.active_segment = null;
+                    }
+                });
+
+            }
+        }, 500);
     };
 
     this.pause = function () {
-        if (_.isNull(this.active_layer)) {
-            this.getPlayable();
+        $interval.cancel(player);
+
+        this.isPaused = true;
+
+        // Stop active segment if available
+        if (!_.isNull(this.active_segment)) {
+            this.active_segment.media.video.pause();
         }
-
-        this.active_layer.media.video.pause();
-    };
-
-    this.next = function () {
-        var playable_layer = this.getPlayable();
-    };
-
-    this.getPlayable = function () {
-        var sorted_layers, bounded_layers = [];
-
-        //Find the layer that is within the bounds of the cursor
-        _.forEach(_.sortBy(this.layers, 'order'), function (layer) {
-            if (vm.cursor >= layer.in && vm.cursor < layer.out) {
-                bounded_layers.push(layer);
-            }
-        });
-
-        this.active_layer = bounded_layers[0];
-
-        return this.active_layer;
     };
 });
