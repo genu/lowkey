@@ -87,7 +87,7 @@ angular.module('module.composition').factory('Segment', function ($rootScope, Se
             effects[i].node.source = effects[i - 1].node;
         }
 
-        return effects[effects.length - 1];
+        return effects[effects.length - 1].node;
     };
 
     return Segment;

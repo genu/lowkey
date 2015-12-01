@@ -80,7 +80,11 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
             debugger;
         },
         select: function (data) {
-            $rootScope.$broadcast('Timeline:LayerSelected', vm.items.get(data.items)[0].layer);
+            if (data.items.length > 0) {
+                $rootScope.$broadcast('Timeline:LayerSelected', vm.items.get(data.items)[0].segment);
+            } else {
+                $rootScope.$broadcast('Timeline:LayerDeselected');
+            }
         },
         rangechange: function (start, end, byUser) {
 
@@ -151,12 +155,6 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
         groupTemplate: function (group) {
             return '<div style="margin-top: 50px;">Sequence ' + (group.content.order + 1) + '</div>';
         },
-        onAdd: function (a, b, c, d) {
-
-        },
-        onAddGroup: function (a, b, c) {
-            debugger;
-        },
         onMoveGroup: this.onMoveSequence,
         onMoving: this.onChangeSegment,
         itemsAlwaysDraggable: true,
@@ -207,6 +205,7 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
     $rootScope.$on('Segment:Initialized', function (e, segment) {
         var sequence;
 
+        // Add the new segment to the vis timeline
         sequence = Timeline.getSequenceBySegment(segment);
 
         vm.items.add({
@@ -218,31 +217,5 @@ angular.module('module.core').controller('TimelineCtrl', function ($compile, $in
         });
 
         vm.timeline.setItems(vm.items);
-    });
-
-    $rootScope.$on('media:loaded', function (a, b, c) {
-        vm.items = new VisDataSet();
-        vm.groups = new VisDataSet();
-
-        _.forEach(Timeline.layers, function (layer, index) {
-            index++;
-            vm.items.add({
-                id: index,
-                group: index,
-                layer: layer,
-                start: 0,
-                end: layer.media.video.duration() * 1000,
-                className: 'blah'
-            });
-
-            vm.groups.add({id: index, content: layer});
-
-            vm.data = {
-                items: vm.items,
-                groups: vm.groups
-            }
-        });
-
-        vm.timeline.redraw();
     });
 });

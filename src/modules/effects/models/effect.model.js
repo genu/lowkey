@@ -6,8 +6,7 @@ angular.module('module.effects').service('Effect', function ($rootScope, Serious
         this.node = Seriously.getInstance().effect(name);
         this.order = 0;
         this.active = true;
-
-        $rootScope.$broadcast('effects:created')
+        this.inputs = _.toArray(this.node.inputs());
     }
 
     Effect.prototype.setOrder = function (order) {

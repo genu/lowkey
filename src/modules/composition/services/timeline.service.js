@@ -28,6 +28,10 @@ angular.module('module.composition').service('Timeline', function ($rootScope, $
         vm.active_segment.playAt(vm.cursor);
     });
 
+    $rootScope.$on('Timeline:RequestToRender', function () {
+        target.source = vm.videoScale(vm.active_segment.render());
+    });
+
     $rootScope.$on('Media:Loaded', function (event, media_ref) {
         //Initialize the segment with the new media
         _.forEach(vm.sequences, function (sequence) {
