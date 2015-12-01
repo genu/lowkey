@@ -12,6 +12,9 @@ angular.module('module.core').service('Hash', function () {
             }
 
             return Math.abs(hash);
+        },
+        random: function () {
+            return this.encode(new Date().toString() + Math.random());
         }
     }
 });

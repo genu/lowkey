@@ -1,14 +1,11 @@
-.ui.inverted.vertical.masthead.center.aligned.segment
-    .ui.container
-        .ui.large.secondary.inverted.pointing.menu
-            a.active.item Editor
-            .right.item
-                a.ui.inverted.button Log in
-                a.inverted.button Sign up
-.ui.vertical.stripe.segment
-    .ui.three.column.padded.very.relaxed.grid
-            .column(ui-view="properties@")
-            .column(ui-view="previewer@")
-            .column(ui-view="resources@")
-    .ui.one.column.padded.grid
-        .column(ui-view="timeline@")
+div.ui.equal.width.center.aligned.padded.grid
+    div.row
+        div.column(ui-view="properties@")
+        div.ui.vertical.divider
+            i.ellipsis.vertical.icon
+        div.column(ui-view="previewer@")
+        div.ui.vertical.divider
+            i.ellipsis.vertical.icon
+        div.column(ui-view="resources@")
+    div.row
+        div.column(ui-view="timeline@")

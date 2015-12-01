@@ -3,6 +3,7 @@
 angular.module('module.composition').service('Timeline', function ($rootScope, $interval, Seriously, moment) {
     var vm = this;
     this.active_layer = null;
+    this.sequences = [];
     this.layers = [];
     var seriously = Seriously.getInstance();
     var target = null;
@@ -44,6 +45,17 @@ angular.module('module.composition').service('Timeline', function ($rootScope, $
 
         layer[0].initSource(options.element);
     });
+
+    this.addSequence = function (sequence) {
+
+    };
+
+    this.addSequence = function (sequence) {
+        sequence.order = this.sequences.length; // Automatically make it the last sequence
+        this.sequences.push(sequence);
+
+        $rootScope.$broadcast('Timeline:addSequence', sequence);
+    };
 
     this.addLayer = function (layer) {
         layer.order = this.layers.length; // Automaically make it the last layer
