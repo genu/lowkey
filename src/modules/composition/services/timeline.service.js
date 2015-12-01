@@ -86,7 +86,7 @@ angular.module('module.composition').service('Timeline', function ($rootScope, $
 
             hasSegments = false;
 
-            vm.cursor += 500;
+            vm.cursor += 50;
 
             // Check for available segments
             _.forEach(vm.sequences, function (sequence) {
@@ -124,9 +124,8 @@ angular.module('module.composition').service('Timeline', function ($rootScope, $
                         vm.active_segment = null;
                     }
                 });
-
             }
-        }, 500);
+        }, 50);
     };
 
     this.pause = function () {
