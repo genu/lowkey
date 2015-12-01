@@ -1,11 +1,60 @@
 'use strict';
 
-angular.module('module.core').controller('PropertiesCtrl', function ($rootScope, Effect) {
+angular.module('module.core').controller('PropertiesCtrl', function ($rootScope, VisDataSet, Effect, Animation, Keyframe) {
     var vm;
 
     vm = this;
 
+    this.data = {
+        items: new VisDataSet(),
+        groups: new VisDataSet()
+    };
+
     this.active_segment = null;
+
+    this.options = {
+        orientation: {
+            axis: 'top'
+        },
+        showCurrentTime: false,
+        zoomable: false,
+        showMajorLabels: false,
+        groupTemplate: function (group) {
+            return group.content.param.title;
+        }
+    };
+
+    this.events = {
+        onload: function (timeline) {
+            timeline.addCustomTime(0, 'animating-cursor')
+        }
+    };
+
+    this.addKeyframe = function (effect, param, value) {
+        var keyframe;
+
+        keyframe = new Keyframe(param.title, value);
+
+        effect.getAnimationByParam(param).keyframes.push(keyframe);
+    };
+    this.toggleAnimation = function (effect, param) {
+        var animation;
+
+        animation = new Animation(param);
+
+        if (!effect.hasAnimation(animation)) {
+            effect.animations.push(animation);
+            this.data.groups.add({id: animation.param.$$hashKey, content: animation});
+
+            effect.isAnimating = true;
+            param.isAnimating = true;
+        } else {
+            effect.removeAnimation(animation);
+            this.data.groups.remove(animation.param.$$hashKey);
+
+            param.isAnimating = false;
+        }
+    };
 
     this.removeEffect = function (effect) {
         this.active_segment.removeEffect(effect);

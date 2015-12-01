@@ -33,16 +33,23 @@ div.ui(droppable, hover-class="tertiary", on-drop="properties.onDrop")
                     .content
                         form.ui.form
                             .field(ng-repeat="param in effect.inputs")
-                                label(ng-if="param.title != 'source'") {{param.title | uppercase}}
+                                label(ng-if="param.title != 'source'")
+                                    | {{param.title | uppercase}}
                                 div(ng-switch="param.type")
-                                    div(ng-switch-when="enum")
+                                    div.ui.icon.left.floated.tiny.buttons(ng-if="param.type === 'enum' || param.type === 'number'", style="margin-top: 14px;")
+                                        button.ui.button(ng-class="{orange: param.isAnimating}", ng-click="properties.toggleAnimation(effect, param)")
+                                            i.lightning.icon
+                                        button.ui.button(ng-if="param.isAnimating", ng-click="properties.addKeyframe(effect, param, effect.node[param.title])")
+                                            i.plus.icon
+                                    div(ng-switch-when="enum", style="margin-left: {{param.isAnimating ? '70px': '40px'}}")
                                         .ui.selection.dropdown(semantic-dropdown, ng-model="effect.node[param.title]")
                                             i.dropdown.icon
                                             .default.text {{param.defaultValue}}
                                             .menu
                                                 .item(ng-repeat="option in param.options") {{option}}
-                                    div(ng-switch-when="number")
+                                    div(ng-switch-when="number", style="margin-left: {{param.isAnimating ? '70px': '40px'}}")
                                         rzslider(rz-slider-floor="param.min", rz-slider-ceil="param.max == 'Infinity' ? 200 : param.max", rz-slider-step="0.01", rz-slider-model="effect.node[param.title]", rz-slider-precision="2")
             tr(ng-if="effect.isAnimating")
                 td Animate
-                td(colspan="3") Animating prefs
+                td(colspan="3")
+                    vis-timeline(data='properties.data', options='properties.options', events='properties.events')
