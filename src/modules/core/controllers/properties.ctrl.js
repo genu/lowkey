@@ -5,6 +5,7 @@ angular.module('module.core').controller('PropertiesCtrl', function ($rootScope,
 
     vm = this;
 
+    this.timeline = null;
     this.data = {
         items: new VisDataSet(),
         groups: new VisDataSet()
@@ -13,11 +14,13 @@ angular.module('module.core').controller('PropertiesCtrl', function ($rootScope,
     this.active_segment = null;
 
     this.options = {
+        start: 0,
+        end: _.isNull(this.active_segment) ? 0 : this.active_segment.out,
         orientation: {
             axis: 'top'
         },
         showCurrentTime: false,
-        zoomable: false,
+        zoomable: true,
         showMajorLabels: false,
         groupTemplate: function (group) {
             return group.content.param.title;
@@ -26,7 +29,10 @@ angular.module('module.core').controller('PropertiesCtrl', function ($rootScope,
 
     this.events = {
         onload: function (timeline) {
-            timeline.addCustomTime(0, 'animating-cursor')
+            vm.timeline = timeline;
+
+            timeline.addCustomTime(0, 'animating-cursor');
+            timeline.setWindow(0, _.isNull(vm.active_segment) ? 0 : vm.active_segment.out);
         }
     };
 
@@ -36,7 +42,13 @@ angular.module('module.core').controller('PropertiesCtrl', function ($rootScope,
         keyframe = new Keyframe(param.title, value);
 
         effect.getAnimationByParam(param).keyframes.push(keyframe);
+        this.data.items.add({
+            id: 'blah',
+            start: 2,
+            type: 'point'
+        })
     };
+
     this.toggleAnimation = function (effect, param) {
         var animation;
 
