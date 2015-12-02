@@ -1,16 +1,14 @@
-# Simple Angular Boilerplate
-This is a simple boilerplate architecture for frontend angular projects. For complete documentation, see the [Wiki](https://github.com/genu/simple-angular-boilerplate/wiki) page.
-
-See [Roadmap](https://github.com/genu/simple-angular-boilerplate/wiki/Roadmap) for planned future developments.
-
-### Philosophy
-Modular architecture for building angular applications with an emphasis on minimal dependencies, lightweight core, and agnostic toward third party services.
-
+![Screenshot](screenshot.png)
+# Lowkey video editor
+## Goal
+The goal of the project is build a web based video compositor. Leveraging the latest in web technologies and with the help of the seriously.js library, we want to build a web editor that can load input videos, do video scrubbing, add various effects to the video inputs, be able to toogle effects on or off, change the order in which the effects are applied, be able to remove effects, be able to animate effects over time using keyframes, and being able to animate the properties by setting keyframes at different points in time.
+## Motivation
+For a very long time, we have seen web technologies struggle to process and consume real time video data feeds. However, with advancements in the engines of browsers, JavaScript, and easy to use libraries that can process video (seriously.js), we wanted to build a video editor. We knew this had a lot of moving parts but after seeing video web editors on the web and having a good understanding in web programming, we wanted to take on the challenge to build one ourselves. 
 ## Prerequisites
 [grunt](https://github.com/gruntjs/grunt) and [bower](https://github.com/bower/bower) should already be installed
 ## Quick Start
-* `git clone https://github.com/genu/simple-frontend-boilerplate`
-* `cd simple-frontend-boilerplate`
+* `git clone https://github.com/genu/lowkey`
+* `cd lowkey`
 * `npm install`
 * `grunt server`
 
@@ -46,16 +44,6 @@ src/
 │   │   │   ├── home.html
 │   ├── app.core.js (Main module definition)
 ```
-## Extending
-The best way to extend an application is to add modules to the `modules/` directory as needed by your application. The `core` module should act as a global module, therefore, application wide functionality should be added to the `core` module.
-
-## Contributing
-I accept pull requests for fixes and/or new features. For small hotfixes, I will merge code, however, for everything else, please make sure to open up an issue first.
-
-### Steps
-1. Create a module similar to the `core` module in the `modules/` directory
-2. Add the new module as a dependency to the application in `src/js/app.js`
-2. Relaunch the server with `grunt server`
 
 ## License
 Licensed under the MIT License

@@ -5,7 +5,7 @@ angular.module('module.effects').service('Animation', function ($rootScope, Seri
         this.$id = Hash.random();
         this.param = param;
         this.keyframes = [];
-        this.isEnabled = true;
+        this.active = true;
     }
 
     Animation.prototype.addKeyframe = function (keyframe) {
