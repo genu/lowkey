@@ -5,6 +5,7 @@ angular.module('module.core').controller('PropertiesCtrl', function ($rootScope,
 
     vm = this;
 
+    this.current_time = 0;
     this.timeline = null;
     this.data = {
         items: new VisDataSet(),
@@ -23,7 +24,7 @@ angular.module('module.core').controller('PropertiesCtrl', function ($rootScope,
         zoomable: true,
         showMajorLabels: false,
         groupTemplate: function (group) {
-            return group.content.param.title;
+            return group.content.input.title;
         }
     };
 
@@ -36,36 +37,33 @@ angular.module('module.core').controller('PropertiesCtrl', function ($rootScope,
         }
     };
 
-    this.addKeyframe = function (effect, param, value) {
+    this.addKeyframe = function (param, value) {
         var keyframe;
 
-        keyframe = new Keyframe(param.title, value);
-
-        effect.getAnimationByParam(param).keyframes.push(keyframe);
-        this.data.items.add({
-            id: 'blah',
-            start: 2,
-            type: 'point'
-        })
+        keyframe = new Keyframe(0, value);
+        
+        if (param.animation.addKeframe(keyframe)) {
+            this.data.items.add({
+                id: 'blah',
+                start: 2,
+                type: 'point'
+            })
+        }
     };
 
-    this.toggleAnimation = function (effect, param) {
+    this.toggleAnimation = function (param) {
         var animation;
 
-        animation = new Animation(param);
+        animation = param.toggleAnimation();
 
-        if (!effect.hasAnimation(animation)) {
-            effect.animations.push(animation);
-            this.data.groups.add({id: animation.param.$$hashKey, content: animation});
 
-            effect.isAnimating = true;
-            param.isAnimating = true;
+        if (_.isNull(this.data.groups.get(animation.$id))) {
+            this.data.groups.add({id: animation.$id, content: param});
         } else {
-            effect.removeAnimation(animation);
-            this.data.groups.remove(animation.param.$$hashKey);
-
-            param.isAnimating = false;
+            this.data.groups.remove(animation.$id);
         }
+
+        param.isAnimating = !param.isAnimating;
     };
 
     this.removeEffect = function (effect) {
@@ -90,6 +88,8 @@ angular.module('module.core').controller('PropertiesCtrl', function ($rootScope,
 
     $rootScope.$on('Timeline:LayerSelected', function (event, segment) {
         vm.active_segment = segment;
+        vm.timeline.destroy();
+
         $rootScope.$apply();
     });
 
