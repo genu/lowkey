@@ -41,7 +41,7 @@ angular.module('module.core').controller('PropertiesCtrl', function ($rootScope,
         var keyframe;
 
         keyframe = new Keyframe(0, value);
-        
+
         if (param.animation.addKeframe(keyframe)) {
             this.data.items.add({
                 id: 'blah',
